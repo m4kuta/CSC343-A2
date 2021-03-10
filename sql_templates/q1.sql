@@ -13,19 +13,23 @@ CREATE TABLE q1 (
 -- Do this for each of the views that define your intermediate steps.  
 -- (But give them better names!) The IF EXISTS avoids generating an error 
 -- the first time this file is imported.
-DROP VIEW IF EXISTS pass_id_name CASCADE;
-DROP VIEW IF EXISTS pass_airlines CASCADE;
+DROP VIEW IF EXISTS PassIDFullName CASCADE;
+DROP VIEW IF EXISTS PassAirlines CASCADE;
 
 -- Define views for your intermediate steps here:
-CREATE VIEW pass_id_name AS
+CREATE VIEW PassIDFullName AS
     SELECT id AS pass_id, firstname||' '||surname AS "name"
     FROM passenger;
 
-CREATE VIEW pass_airlines AS
+CREATE VIEW PassAirlines AS
     SELECT pass_id, count(DISTINCT airline) AS airlines
-    FROM (SELECT booking.pass_id, flight.airline AS airline
-          FROM booking JOIN flight ON booking.flight_id = flight.id) AS airline_bookings
+    FROM (
+        SELECT booking.pass_id, flight.airline AS airline
+        FROM booking JOIN flight ON booking.flight_id = flight.id
+        ) AS airline_bookings
     GROUP BY pass_id;
 
 -- Your query that answers the question goes below the "insert into" line:
-INSERT INTO q1 SELECT * FROM pass_id_name NATURAL JOIN pass_airlines;
+INSERT INTO q1
+SELECT *
+FROM PassIDFullName NATURAL JOIN PassAirlines;

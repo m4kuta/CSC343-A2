@@ -50,12 +50,13 @@ CREATE VIEW Direct AS
 -- one conn
 CREATE VIEW OneConn AS
     SELECT p.outbound AS outbound, p.inbound AS inbound, (
-        SELECT count(*) FROM (
+        SELECT count(*)
+        FROM (
             SELECT FirstLeg.id AS FirstLegID, SecondLeg.id AS SecondLegID
             FROM FlightsOnSameDate AS FirstLeg
                 INNER JOIN FlightsOnSameDate AS SecondLeg
                     ON FirstLeg.airport_inbound = SecondLeg.airport_outbound
-                           AND extract(MINUTES FROM SecondLeg.s_dep - FirstLeg.s_arv) >= 30
+                           AND extract(EPOCH FROM SecondLeg.s_dep - FirstLeg.s_arv)/60 >= 30
             WHERE FirstLeg.outbound = p.outbound AND SecondLeg.inbound = p.inbound
             ) PossibleTransfers
         ) AS one_con
@@ -64,15 +65,16 @@ CREATE VIEW OneConn AS
 -- two conn
 CREATE VIEW TwoConn AS
     SELECT p.outbound AS outbound, p.inbound AS inbound, (
-        SELECT count(*) FROM (
+        SELECT count(*)
+        FROM (
             SELECT FirstLeg.id AS FirstLegID, SecondLeg.id AS SecondLegID, ThirdLeg.id AS ThirdLegID
             FROM FlightsOnSameDate AS FirstLeg
                     INNER JOIN FlightsOnSameDate AS SecondLeg
                                 ON FirstLeg.airport_inbound = SecondLeg.airport_outbound
-                                    AND extract(MINUTES FROM SecondLeg.s_dep - FirstLeg.s_arv) >= 30
+                                    AND extract(EPOCH FROM SecondLeg.s_dep - FirstLeg.s_arv)/60 >= 30
                     INNER JOIN FlightsOnSameDate AS ThirdLeg
                                 ON SecondLeg.airport_inbound = ThirdLeg.airport_outbound
-                                    AND extract(MINUTES FROM SecondLeg.s_dep - FirstLeg.s_arv) >= 30
+                                    AND extract(EPOCH FROM ThirdLeg.s_dep - SecondLeg.s_arv)/60 >= 30
             WHERE FirstLeg.outbound = p.outbound AND ThirdLeg.inbound = p.inbound
             ) PossibleTransfers
         ) AS two_con
@@ -87,10 +89,10 @@ CREATE VIEW Earliest AS
             FROM FlightsOnSameDate AS FirstLeg
                     INNER JOIN FlightsOnSameDate AS SecondLeg
                                ON FirstLeg.airport_inbound = SecondLeg.airport_outbound
-                                   AND extract(MINUTES FROM SecondLeg.s_dep - FirstLeg.s_arv) >= 30
+                                   AND extract(EPOCH FROM SecondLeg.s_dep - FirstLeg.s_arv)/60 >= 30
                     INNER JOIN FlightsOnSameDate AS ThirdLeg
                                ON SecondLeg.airport_inbound = ThirdLeg.airport_outbound
-                                   AND extract(MINUTES FROM ThirdLeg.s_dep - SecondLeg.s_arv) >= 30
+                                   AND extract(EPOCH FROM ThirdLeg.s_dep - SecondLeg.s_arv)/60 >= 30
             WHERE FirstLeg.outbound = p.outbound AND ThirdLeg.inbound = p.inbound
             ) PossibleRoutes
         UNION (
@@ -98,7 +100,7 @@ CREATE VIEW Earliest AS
             FROM FlightsOnSameDate AS FirstLeg
                      INNER JOIN FlightsOnSameDate AS SecondLeg
                                 ON FirstLeg.airport_inbound = SecondLeg.airport_outbound
-                                    AND extract(MINUTES FROM SecondLeg.s_dep - FirstLeg.s_arv) >= 30
+                                    AND extract(EPOCH FROM SecondLeg.s_dep - FirstLeg.s_arv)/60 >= 30
             WHERE FirstLeg.outbound = p.outbound AND SecondLeg.inbound = p.inbound
             )
         UNION (
