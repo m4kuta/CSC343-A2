@@ -110,7 +110,7 @@ CREATE VIEW Earliest AS
             )
         ORDER BY s_arv
         LIMIT 1
-        )
+        ) AS earliest
     FROM PossibleCityRoutes p;
 
 -- Your query that answers the question goes below the "insert into" line:
