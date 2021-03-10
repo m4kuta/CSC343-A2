@@ -21,7 +21,30 @@ DROP VIEW IF EXISTS intermediate_step CASCADE;
 
 
 -- Define views for your intermediate steps here:
+create view PlaneCap as
+select plane.airline, tail_number, (capacity_economy + capacity_business + capacity_first) as total_cap 
+from plane
+group by tail_number;
 
+
+create view FlightsByPlane as
+select plane, flight_num, count(*) as total_passengers
+from flight join booking on flight.id = booking.flight_id
+group by plane, flight_num;
+
+
+create view PercentCapacity as
+select airline, tail_number, flight_num, total_cap, total_passengers, total_passengers/total_cap::float as percent_cap
+from PlaneCap join FlightsByPlane on PlaneCap.tail_number = FlightsByPlane.plane;
 
 -- Your query that answers the question goes below the "insert into" line:
 INSERT INTO q4
+select 
+	airline, tail_number, 
+	count(case when percent_cap < 0.2 then 1 end) as very_low, 
+	count(case when 0.2 <= percent_cap and percent_cap < 0.4 then 1 end) as low, 
+	count(case when 0.4 <= percent_cap and percent_cap < 0.6 then 1 end) as fair, 
+	count(case when 0.6 <= percent_cap and percent_cap < 0.8 then 1 end) as normal, 
+	count(case when 0.8 <= percent_cap then 1 end) as high
+from PercentCapacity
+group by airline, tail_number, flight_num;

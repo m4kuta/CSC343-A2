@@ -32,8 +32,8 @@ create view FlightBookingInfo as
 select 
     Flights.id as flight_id, booking.id as booking_id, airline, name, dep_country, arv_country, seat_class, price, 
     s_dep, departure.datetime as a_dep, s_arv, arrival.datetime as a_arv, 
-    departure.datetime - s_dep as dep_delay, 
-    arrival.datetime - s_arv as arv_delay 
+    (departure.datetime - s_dep) as dep_delay, 
+    (arrival.datetime - s_arv) as arv_delay 
 from 
     Flights
     join airline on (Flights.airline = airline.code)
