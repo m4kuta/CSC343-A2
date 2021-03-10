@@ -44,6 +44,6 @@ with recursive Hop as (
 	where 
 		n < (select n from n) and Hop.inbound = Flight.outbound and (Flight.s_dep - Hop.s_arv) <= '24:00:00' and (Flight.s_dep - Hop.s_arv) >= '00:00:00'
 ) 
-select * -- inbound as destination, n as num_flights
+select inbound as destination, n as num_flights
 from Hop 
 order by n, flight_id;

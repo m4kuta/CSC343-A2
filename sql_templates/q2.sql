@@ -16,6 +16,10 @@ CREATE TABLE q2 (
 -- (But give them better names!) The IF EXISTS avoids generating an error 
 -- the first time this file is imported.
 DROP VIEW IF EXISTS intermediate_step CASCADE;
+drop view if exists Flights cascade;
+drop view if exists FlightBookingInfo cascade;
+drop view if exists RefundableFlights cascade;
+drop view if exists AirlineYearRefunds cascade;
 
 
 -- Define views for your intermediate steps here:
