@@ -8,8 +8,6 @@
 */ 
 
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
@@ -149,10 +147,7 @@ public class Assignment2 {
 			ps5.setInt(1, id);
 			ps5.setInt(2, passID);
 			ps5.setInt(3, flightID);
-			LocalDateTime dateTimeInstance = LocalDateTime.now();
-			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm");
-			String dateTime = dateTimeFormatter.format(dateTimeInstance);
-			ps5.setString(4, dateTime); // TODO: Double check this
+			ps5.setTimestamp(4, getCurrentTimeStamp());
 			ps5.setInt(5, price); // TODO: Double check this
 			ps5.setString(6, seatClass);
 			ps5.setInt(7, row);
