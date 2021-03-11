@@ -8,11 +8,13 @@
 */ 
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
 
-// TODO Is this allowed?
+// TODO: Is this allowed?
 import java.util.Scanner;
 
 public class Assignment2 {
@@ -82,34 +84,87 @@ public class Assignment2 {
     */
    	public boolean bookSeat(int passID, int flightID, String seatClass) {
     	// Implement this method!
-		
-		
-		// Find total capacity for seatClass on flightID
-		String q1 = "select capacity_? from flight join plane on plane = tail_number where id = ?";
-		PreparedStatement ps1 = connection.prepareStatement(q1);
-		ResultSet capacity = ps1.executeQuery();
-		
-		// Find how many seats are already occupied for seatClass on flightID
-		String q2 = "select count(*) as booked from booking where flight_id = 5 and seat_class = 'economy' group by flight_id, seat_class order by flight_id, seat_class";
-		PreparedStatement ps2 = connection.prepareStatement(q2);
-		ResultSet booked = ps2.executeQuery();
 
-		// Determine appropriate seat
-		String q3;
-		PreparedStatement ps3;
-		ResultSet resultSet3;
+		int capacity;
+		int booked;
 
-		
-		// Insert booking
-		String q4;
-		PreparedStatement ps4;
-		ResultSet resultSet4;
-
-		if () {
-			return true;
+		try { // TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
+			// Find total capacity for seatClass on flightID
+			String q1 = "select capacity_? as capacity from flight join plane on plane = tail_number where id = ?";
+			PreparedStatement ps1 = connection.prepareStatement(q1);
+			ps1.setString(1, seatClass);
+			ps1.setInt(2, flightID);
+			ResultSet rs1 = ps1.executeQuery();
+			rs1.next();
+			capacity = rs1.getInt("capacity");
+			
+			// Find how many seats are already occupied for seatClass on flightID
+			String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = ? group by flight_id, seat_class order by flight_id, seat_class";
+			PreparedStatement ps2 = connection.prepareStatement(q2);
+			ps1.setInt(1, flightID);
+			ps1.setString(2, seatClass);
+			ResultSet rs2 = ps2.executeQuery();
+			rs2.next();
+			booked = rs2.getInt("booked");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 
-		return false;
+		// Determine appropriate row and letter
+		Integer row;
+		String letter;
+
+		if (capacity - booked <= -10) {
+			return false;
+		} else if (capacity - booked > 0) {
+			row = booked / 6 + 1;
+			letter = seatLetters.get(booked % 6);
+		} else {
+			row = null;
+			letter = null;
+		}
+		
+		try {
+			// Get latest booking.id
+			String q3 = "select max(id) from booking";
+			PreparedStatement ps3 = connection.prepareStatement(q3);
+			ResultSet rs3 = ps3.executeQuery();
+			rs3.next();
+			int id = rs3.getInt("max") + 1;
+
+			// Get ticket price
+			String q4 = "select ? from price where flight_id = ?";
+			PreparedStatement ps4 = connection.prepareStatement(q4);
+			ps4.setString(1, seatClass);
+			ps4.setInt(2, flightID);
+			ResultSet rs4 = ps4.executeQuery();
+			rs4.next();
+			int price = rs4.getInt(seatClass);
+
+
+			// Insert booking
+			String q5 = "insert into booking values (?, ?, ?, ?, ?, ?, ?, ?)";
+			PreparedStatement ps5 = connection.prepareStatement(q5);
+			ps5.setInt(1, id);
+			ps5.setInt(2, passID);
+			ps5.setInt(3, flightID);
+			LocalDateTime dateTimeInstance = LocalDateTime.now();
+			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm");
+			String dateTime = dateTimeFormatter.format(dateTimeInstance);
+			ps5.setString(4, dateTime); // TODO: Double check this
+			ps5.setInt(5, price); // TODO: Double check this
+			ps5.setString(6, seatClass);
+			ps5.setInt(7, row);
+			ps5.setString(8, letter);
+			ps5.executeUpdate();
+
+			// TODO: Do we need to create a new passenger? Don't think so according to this function's Javadoc
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return true;
    	}
 
 	/**
