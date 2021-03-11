@@ -258,8 +258,8 @@ public class Assignment2 {
 						instance.upgrade(flightID);
 						break;
 				}
-				userInput.close();
 			}
+			userInput.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
