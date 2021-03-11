@@ -49,7 +49,9 @@ public class Assignment2 {
 		// Implement this method!
 		try {
 			connection = DriverManager.getConnection(URL, username, password);
-		} catch (Exception e) {
+			// TODO: Set search path
+			return true;
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -104,7 +106,7 @@ public class Assignment2 {
 			ResultSet rs2 = ps2.executeQuery();
 			rs2.next();
 			booked = rs2.getInt("booked");
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -155,7 +157,7 @@ public class Assignment2 {
 			ps5.executeUpdate();
 
 			// TODO: Do we need to create a new passenger? Don't think so according to this function's Javadoc
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
@@ -207,11 +209,59 @@ public class Assignment2 {
 
 	public static void main(String[] args) {
 		// You can put testing code in here. It will not affect our autotester.
-		System.out.println("Running the code!");
-
-		System.out.println("What do you want to do:");
-		Scanner userInput = new Scanner(System.in);
-		String command = userInput.nextLine();
+		try {
+			Assignment2 instance = new Assignment2();
+			System.out.println("Running the code!");
+			Scanner userInput = new Scanner(System.in);
+	
+			boolean running = true;
+			while (running) {
+				System.out.println("Enter a command:");
+				System.out.println("[0] Exit");
+				System.out.println("[1] Connect");
+				System.out.println("[2] Disconnect");
+				System.out.println("[3] Book");
+				System.out.println("[4] Upgrade");
+				String function = userInput.nextLine();
+				switch (function) {
+					case "0":
+						running = false;
+						break;
+					case "1":
+						System.out.println("===Connect===");
+						System.out.println("Enter URL:");
+						String url = userInput.nextLine();
+						System.out.println("Enter username:");
+						String user = userInput.nextLine();
+						System.out.println("Enter password:");
+						String pass = userInput.nextLine();
+						instance.connectDB(url, user, pass);
+						break;
+					case "2":
+						System.out.println("===Disconnect===");
+						instance.disconnectDB();
+						break;
+					case "3":
+						System.out.println("===Book===");
+						System.out.println("Enter passport id:");
+						int passID = userInput.nextInt();
+						System.out.println("Enter flight id:");
+						int flightID = userInput.nextInt();
+						System.out.println("Enter seat class");
+						String seatClass = userInput.nextLine();
+						instance.bookSeat(passID, flightID, seatClass);
+						break;
+					case "4":
+						System.out.println("===Upgrade===");
+						System.out.println("Enter flight id:");
+						flightID = userInput.nextInt();
+						instance.upgrade(flightID);
+						break;
+				}
+				userInput.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
-
-}
+}	
