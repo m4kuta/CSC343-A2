@@ -18,16 +18,18 @@ DROP VIEW IF EXISTS PassAirlines CASCADE;
 
 -- Define views for your intermediate steps here:
 CREATE VIEW PassIDFullName AS
-    SELECT id AS pass_id, firstname||' '||surname AS "name"
+    SELECT id, firstname||' '||surname AS "name"
     FROM passenger;
 
 CREATE VIEW PassAirlines AS
-    SELECT pass_id, count(DISTINCT airline) AS airlines
+    SELECT id, count(DISTINCT airline) AS airlines
     FROM (
-        SELECT booking.pass_id, flight.airline AS airline
-        FROM booking JOIN flight ON booking.flight_id = flight.id
+        SELECT passenger.id AS id, flight.airline AS airline
+        FROM booking
+            JOIN flight ON booking.flight_id = flight.id
+            FULL OUTER JOIN passenger ON passenger.id = booking.pass_id
         ) AS airline_bookings
-    GROUP BY pass_id;
+    GROUP BY id;
 
 -- Your query that answers the question goes below the "insert into" line:
 INSERT INTO q1
