@@ -389,7 +389,7 @@ public class Assignment2 {
 						int passID = userInput.nextInt();
 						System.out.println("Enter flight id:");
 						int flightID = userInput.nextInt();
-						System.out.println("Enter seat class");
+						System.out.println("Enter seat class:");
 						String seatClass = userInput.nextLine();
 						if (instance.bookSeat(passID, flightID, seatClass)) {
 							System.out.println("Booked");
