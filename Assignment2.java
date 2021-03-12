@@ -59,8 +59,8 @@ public class Assignment2 {
 		} 
 		catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -69,8 +69,12 @@ public class Assignment2 {
 	 * @return true if the closing was successful, false otherwise
 	 */
 	public boolean disconnectDB() {
-		// Implement this method!
-		return false;
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			return false;
+		}
+		return true;
 	}
    
    /* ======================= Airline-related methods ======================= */
@@ -189,8 +193,134 @@ public class Assignment2 {
 	* @return           the number of passengers upgraded, or -1 if an error occured.
     */
 	public int upgrade(int flightID) {
-		// Implement this method!
+		// TODO: test me
+		int startBRow, startBSeatIndex, startFRow, startFSeatIndex, upgraded = 0;
+		try {
+			// Part 1: Retrieve the plane's business and first class capacity
+			String SeatsQuery =
+				"select capacity_business, capacity_first " +
+				"from flight join plane on flight.plane = plane.tail_number " +
+				"where flight_id = ?";
+			PreparedStatement psSeats = connection.prepareStatement(SeatsQuery);
+			psSeats.setInt(1, flightID);
+			ResultSet rsSeats = psSeats.executeQuery();
 
+			if (!rsSeats.next()) return upgraded; // Non-existent flight, so no overbooked/upgraded passengers
+			int fSeats = rsSeats.getInt("capacity_first");
+			int lastFRow = fSeats == 0 ? 0 : fSeats / 6 + 1;
+			int lastFSeatIndex = fSeats % 6 + 1;
+			int bSeats = rsSeats.getInt("capacity_business");
+			int lastBRow = bSeats == 0 ? 0 : lastFRow + bSeats / 6 + 1;
+			int lastBSeatIndex = bSeats % 6 + 1;
+
+			// Part 2: Retrieve the starting positions for the business and first class
+			String vacantBQuery =
+				"select seat_row, seat_letter " +
+				"from booking " +
+				"where flight_id = ? and seat_class = 'business' " +
+				"order by seat_row desc, seat_letter desc";
+			PreparedStatement psVacantB = connection.prepareStatement(vacantBQuery);
+			psVacantB.setInt(1, flightID);
+			ResultSet rsVacantB = psVacantB.executeQuery();
+
+			if (!rsVacantB.next()) { // No Business class passengers
+				startBRow = lastFRow + 1;
+				startBSeatIndex = 1;
+			} else {
+				startBRow = rsVacantB.getInt("seat_row");
+				startBSeatIndex = rsVacantB.getString("seat_letter").charAt(0) - 'A' + 1;
+				if (startBSeatIndex == 6) startBRow++;
+				startBSeatIndex = startBSeatIndex % 6 + 1;
+			}
+
+			String vacantFQuery =
+				"select seat_row, seat_letter " +
+				"from booking " +
+				"where flight_id = ? and seat_class = 'first' " +
+				"order by seat_row desc, seat_letter desc";
+			PreparedStatement psVacantF = connection.prepareStatement(vacantFQuery);
+			psVacantF.setInt(1, flightID);
+			ResultSet rsVacantF = psVacantF.executeQuery();
+
+			if (!rsVacantF.next()) { // No First class passengers
+				startFRow = 1;
+				startFSeatIndex = 1;
+			} else {
+				startFRow = rsVacantF.getInt("seat_row");
+				startFSeatIndex = rsVacantF.getString("seat_letter").charAt(0) - 'A' + 1;
+				if (startFSeatIndex == 6) startFRow++;
+				startFSeatIndex = startFSeatIndex % 6 + 1;
+			}
+
+			// Part 3: Retrieve all passengers booked by flight ID with null values, sort by earliest booking
+			String overbookedQuery =
+				"select * " +
+				"from booking " +
+				"where flight_id = ? and seat_class = 'economy' and seat_row is null and seat_letter is null " +
+				"order by datetime";
+			PreparedStatement psOverbooked = connection.prepareStatement(overbookedQuery);
+			psOverbooked.setInt(1, flightID);
+			ResultSet rsOverbooked = psOverbooked.executeQuery();
+
+			boolean remaining = rsOverbooked.next();
+			if (!remaining) return upgraded; // No overbooked passengers, so zero upgrades done.
+			String currentClass = "business";
+			int currRow = startBRow;
+			int currSeatIndex = startBSeatIndex;
+			int lastRow = lastBRow;
+			int lastSeatIndex = lastBSeatIndex;
+
+			// Part 4: Upgrade until no remaining overbooked or seats are full
+			while (remaining
+					&& ((currentClass.equals("business")
+						|| currRow < lastRow
+						|| (currRow == lastRow && currSeatIndex <= lastSeatIndex)))) {
+				if (currentClass.equals("business")
+					&& (currRow > lastRow
+						|| (currRow == lastRow && currSeatIndex > lastSeatIndex))) {
+					currentClass = "first";
+					currRow = startFRow;
+					currSeatIndex = startFSeatIndex;
+					lastRow = lastFRow;
+					lastSeatIndex = lastFSeatIndex;
+					continue;
+				}
+				String updateSeating =
+						"update booking " +
+						"set seat_class = ?, seat_row = ?, seat_letter = ? " +
+						"where id = ? ";
+				PreparedStatement psUpdateSeating = connection.prepareStatement(updateSeating);
+				psUpdateSeating.setString(1, currentClass);
+				psUpdateSeating.setInt(2, startBRow);
+				psUpdateSeating.setString(3, String.valueOf(startBSeatIndex + 'A' - 1));
+				psUpdateSeating.setInt(4, rsOverbooked.getInt("id"));
+				psUpdateSeating.executeUpdate();
+				upgraded++;
+
+				if (currSeatIndex == 6) currRow++;
+				currSeatIndex = currSeatIndex % 6 + 1;
+
+				remaining = rsOverbooked.next();
+			}
+
+			// Part 5: If Business and First class is full, delete remaining overbooked passengers
+			if (remaining) {
+				do {
+					String deleteBooking =
+						"delete from booking " +
+						"where id = ?";
+					PreparedStatement psDeleteBooking = connection.prepareStatement(deleteBooking);
+					psDeleteBooking.setInt(1, rsOverbooked.getInt("id"));
+					psDeleteBooking.executeUpdate();
+
+					remaining = rsOverbooked.next();
+				} while (remaining);
+			}
+
+			return upgraded;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return -1;
 	}
 
