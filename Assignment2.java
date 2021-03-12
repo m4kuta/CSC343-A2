@@ -101,9 +101,9 @@ public class Assignment2 {
 		try { 
 			// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
 			// Find total capacity for seatClass on flightID
-			String q1 = "select capacity_? as capacity from flight join plane on plane = tail_number where id = ?";
+			String q1 = "select ? as capacity from flight join plane on plane = tail_number where id = ?";
 			PreparedStatement ps1 = connection.prepareStatement(q1);
-			ps1.setString(1, seatClass);
+			ps1.setString(1, "capacity_" + seatClass);
 			ps1.setInt(2, flightID);
 			ResultSet rs1 = ps1.executeQuery();
 			rs1.next();
@@ -375,7 +375,9 @@ public class Assignment2 {
 						String user = userInput.nextLine();
 						System.out.println("Enter password:");
 						String pass = userInput.nextLine();
-						instance.connectDB(url, user, pass);
+						if (instance.connectDB(url, user, pass)) {
+							printf("Connected");
+						}
 						break;
 					case "2":
 						System.out.println("===Disconnect===");
