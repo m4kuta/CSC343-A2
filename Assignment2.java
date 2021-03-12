@@ -49,9 +49,15 @@ public class Assignment2 {
 		// Implement this method!
 		try {
 			connection = DriverManager.getConnection(URL, username, password);
-			// TODO: Set search path
+			
+			// Set search path
+			String q = "set search_path to air_travel, public";
+			PreparedStatement ps = connection.prepareStatement(q);
+			ps.executeUpdate();
+
 			return true;
-		} catch (SQLException e) {
+		} 
+		catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -88,7 +94,8 @@ public class Assignment2 {
 		int capacity;
 		int booked;
 
-		try { // TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
+		try { 
+			// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
 			// Find total capacity for seatClass on flightID
 			String q1 = "select capacity_? as capacity from flight join plane on plane = tail_number where id = ?";
 			PreparedStatement ps1 = connection.prepareStatement(q1);
@@ -106,7 +113,8 @@ public class Assignment2 {
 			ResultSet rs2 = ps2.executeQuery();
 			rs2.next();
 			booked = rs2.getInt("booked");
-		} catch (SQLException e) {
+		} 
+		catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -117,10 +125,12 @@ public class Assignment2 {
 
 		if (capacity - booked <= -10) {
 			return false;
-		} else if (capacity - booked > 0) {
+		} 
+		else if (capacity - booked > 0) {
 			row = booked / 6 + 1;
 			letter = seatLetters.get(booked % 6);
-		} else {
+		} 
+		else {
 			row = null;
 			letter = null;
 		}
@@ -142,7 +152,6 @@ public class Assignment2 {
 			rs4.next();
 			int price = rs4.getInt(seatClass);
 
-
 			// Insert booking
 			String q5 = "insert into booking values (?, ?, ?, ?, ?, ?, ?, ?)";
 			PreparedStatement ps5 = connection.prepareStatement(q5);
@@ -157,7 +166,8 @@ public class Assignment2 {
 			ps5.executeUpdate();
 
 			// TODO: Do we need to create a new passenger? Don't think so according to this function's Javadoc
-		} catch (SQLException e) {
+		} 
+		catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
