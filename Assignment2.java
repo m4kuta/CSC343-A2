@@ -376,7 +376,7 @@ public class Assignment2 {
 						System.out.println("Enter password:");
 						String pass = userInput.nextLine();
 						if (instance.connectDB(url, user, pass)) {
-							printf("Connected");
+							System.out.println("Connected");
 						}
 						break;
 					case "2":
@@ -391,7 +391,12 @@ public class Assignment2 {
 						int flightID = userInput.nextInt();
 						System.out.println("Enter seat class");
 						String seatClass = userInput.nextLine();
-						instance.bookSeat(passID, flightID, seatClass);
+						if (instance.bookSeat(passID, flightID, seatClass)) {
+							System.out.println("Booked");
+							System.out.println("passID: " + passID);
+							System.out.println("passflightID: " + flightID);
+							System.out.println("seatClass: " + seatClass);
+						};
 						break;
 					case "4":
 						System.out.println("===Upgrade===");
