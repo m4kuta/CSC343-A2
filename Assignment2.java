@@ -95,7 +95,7 @@ public class Assignment2 {
    	public boolean bookSeat(int passID, int flightID, String seatClass) {
     	// Implement this method!
 
-		int capacity;
+		Integer capacity;
 		int booked;
 
 		try { 
