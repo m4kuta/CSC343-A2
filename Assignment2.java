@@ -106,7 +106,7 @@ public class Assignment2 {
 			ps1.setInt(1, flightID);
 			ResultSet rs1 = ps1.executeQuery();
 			rs1.next();
-			capacity = rs1.getInt(seatClass);
+			capacity = rs1.getInt("capacity_" + seatClass);
 			
 			
 			// Find how many seats are already occupied for seatClass on flightID
