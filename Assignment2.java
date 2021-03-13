@@ -95,19 +95,20 @@ public class Assignment2 {
    	public boolean bookSeat(int passID, int flightID, String seatClass) {
     	// Implement this method!
 
-		Integer capacity;
+		int capacity;
 		int booked;
 
 		try { 
 			// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
 			// Find total capacity for seatClass on flightID
-			String q1 = "select ? as capacity from flight join plane on plane = tail_number where id = ?";
+			String q1 = "select ? from flight join plane on plane = tail_number where id = ?";
 			PreparedStatement ps1 = connection.prepareStatement(q1);
-			ps1.setString(1, "capacity_" + seatClass);
+			seatClass = "capacity_" + seatClass;
+			ps1.setString(1, seatClass);
 			ps1.setInt(2, flightID);
 			ResultSet rs1 = ps1.executeQuery();
 			rs1.next();
-			capacity = rs1.getInt("capacity");
+			capacity = rs1.getInt(seatClass);
 			
 			// Find how many seats are already occupied for seatClass on flightID
 			String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = ? group by flight_id, seat_class order by flight_id, seat_class";
