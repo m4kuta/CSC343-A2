@@ -332,17 +332,17 @@ public class Assignment2 {
 
 	/* ----------------------- Helper functions below  ------------------------- */
 
-		// A helpful function for adding a timestamp to new bookings.
-		// Example of setting a timestamp in a PreparedStatement:
-		// ps.setTimestamp(1, getCurrentTimeStamp());
+	// A helpful function for adding a timestamp to new bookings.
+	// Example of setting a timestamp in a PreparedStatement:
+	// ps.setTimestamp(1, getCurrentTimeStamp());
 
-		/**
-		* Returns a SQL Timestamp object of the current time.
-		* 
-		* @return           Timestamp of current time.
-		*/
+	/**
+	* Returns a SQL Timestamp object of the current time.
+	* 
+	* @return           Timestamp of current time.
+	*/
 	private java.sql.Timestamp getCurrentTimeStamp() {
-		java.util.Date now = new java.util.Date();
+		Date now = new Date();
 		return new java.sql.Timestamp(now.getTime());
 	}
 
@@ -364,7 +364,7 @@ public class Assignment2 {
 			System.out.println("Enter username:");
 			String user = userInput.nextLine();
 			if (instance.connectDB(url + user, user, pass)) {
-				System.out.println("===Connected===");
+				System.out.println("[Connected]");
 			}
 	
 			boolean running = true;
@@ -378,12 +378,12 @@ public class Assignment2 {
 					case "0":
 						System.out.println("===Disconnecting===");
 						if (instance.disconnectDB()) {
-							System.out.println("===Disconnected===");
+							System.out.println("[Disconnected]");
 							running = false;
 						}
 						break;
 					case "1":
-						System.out.println("===Book===");
+						System.out.println("===Booking===");
 						System.out.println("Enter passport id:");
 						int passID = Integer.parseInt(userInput.nextLine());
 						System.out.println("Enter flight id:");
@@ -392,18 +392,18 @@ public class Assignment2 {
 						String seatClass = userInput.nextLine();
 
 						if (instance.bookSeat(passID, flightID, seatClass)) {
-							System.out.println("===Booked===");
+							System.out.println("[Booked]");
 							System.out.println("passID: " + passID);
 							System.out.println("passflightID: " + flightID);
 							System.out.println("seatClass: " + seatClass);
 						}
 						break;
 					case "2":
-						System.out.println("===Upgrade===");
+						System.out.println("===Upgrading===");
 						System.out.println("Enter flight id:");
 						flightID = userInput.nextInt();
 						if (instance.upgrade(flightID) != -1) {
-							System.out.println("===Upgraded===");
+							System.out.println("[Upgraded]");
 						}
 						break;
 				}
