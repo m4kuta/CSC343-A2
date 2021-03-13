@@ -108,7 +108,8 @@ public class Assignment2 {
 			ps1.setInt(2, flightID);
 			ResultSet rs1 = ps1.executeQuery();
 			rs1.next();
-			capacity = rs1.getInt(seatClass);
+			capacity = rs1.getInt(1);
+			
 			
 			// Find how many seats are already occupied for seatClass on flightID
 			String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = ? group by flight_id, seat_class order by flight_id, seat_class";
