@@ -111,12 +111,15 @@ public class Assignment2 {
 			
 			// Find how many seats are already occupied for seatClass on flightID
 			// String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class order by flight_id, seat_class";
-			String q2 = "select COALESCE((select count(*) from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class), 0)";
+			String q2 = "select COALESCE((select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class), 0)";
 			PreparedStatement ps2 = connection.prepareStatement(q2);
 			ps2.setInt(1, flightID);
 			ps2.setString(2, seatClass);
 			ResultSet rs2 = ps2.executeQuery();
 			rs2.next();
+			// if (!rs2.next()) {
+			// 	// Something	
+			// }
 			booked = rs2.getInt("booked");
 		} 
 		catch (SQLException e) {
@@ -352,37 +355,32 @@ public class Assignment2 {
 		// You can put testing code in here. It will not affect our autotester.
 		try {
 			Assignment2 instance = new Assignment2();
-			System.out.println("Running the code!");
+			System.out.println("Running the code!");				
 			Scanner userInput = new Scanner(System.in);
+
+			String url = "jdbc:postgresql://localhost:5432/csc343h-";
+			String pass = "";
+			System.out.println("Enter username:");
+			String user = userInput.nextLine();
+			if (instance.connectDB(url + user, user, pass)) {
+				System.out.println("\nConnected!\n");
+			}
+			break;
 	
 			boolean running = true;
 			while (running) {
 				System.out.println("Enter a command:");
-				System.out.println("[0] Exit");
-				System.out.println("[1] Connect");
-				System.out.println("[2] Disconnect");
-				System.out.println("[3] Book");
-				System.out.println("[4] Upgrade");
+				System.out.println("[0] Disconnect");
+				System.out.println("[1] Book");
+				System.out.println("[2] Upgrade");
 				String function = userInput.nextLine();
 				switch (function) {
 					case "0":
-						running = false;
-						break;
-					case "1":
-						System.out.println("===Connect===");
-						String url = "jdbc:postgresql://localhost:5432/csc343h-";
-						String pass = "";
-						System.out.println("Enter username:");
-						String user = userInput.nextLine();
-						if (instance.connectDB(url + user, user, pass)) {
-							System.out.println("Connected!\n");
-						}
-						break;
-					case "2":
 						System.out.println("===Disconnect===");
+						running = false;
 						instance.disconnectDB();
 						break;
-					case "3":
+					case "1":
 						System.out.println("===Book===");
 						System.out.println("Enter passport id:");
 						int passID = Integer.parseInt(userInput.nextLine());
@@ -398,7 +396,7 @@ public class Assignment2 {
 							System.out.println("seatClass: " + seatClass);
 						}
 						break;
-					case "4":
+					case "2":
 						System.out.println("===Upgrade===");
 						System.out.println("Enter flight id:");
 						flightID = userInput.nextInt();
