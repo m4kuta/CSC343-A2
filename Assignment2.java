@@ -229,8 +229,8 @@ public class Assignment2 {
 				startBRow = lastFRow + 1;
 				startBSeatIndex = 1;
 			} else {
-				startBRow = rsVacantB.getInt("seat_row");
-				startBSeatIndex = rsVacantB.getString("seat_letter").charAt(0) - 'A' + 1;
+				startBRow = rsVacantB.getInt("row");
+				startBSeatIndex = rsVacantB.getString("letter").charAt(0) - 'A' + 1;
 				if (startBSeatIndex == 6) startBRow++;
 				startBSeatIndex = startBSeatIndex % 6 + 1;
 			}
@@ -248,8 +248,8 @@ public class Assignment2 {
 				startFRow = 1;
 				startFSeatIndex = 1;
 			} else {
-				startFRow = rsVacantF.getInt("seat_row");
-				startFSeatIndex = rsVacantF.getString("seat_letter").charAt(0) - 'A' + 1;
+				startFRow = rsVacantF.getInt("row");
+				startFSeatIndex = rsVacantF.getString("letter").charAt(0) - 'A' + 1;
 				if (startFSeatIndex == 6) startFRow++;
 				startFSeatIndex = startFSeatIndex % 6 + 1;
 			}
