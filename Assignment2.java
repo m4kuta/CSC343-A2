@@ -104,7 +104,7 @@ public class Assignment2 {
 			seatClass = "capacity_" + seatClass;
 			String q1 = "select " + seatClass + " from flight join plane on plane = tail_number where id = ?";
 			PreparedStatement ps1 = connection.prepareStatement(q1);
-			ps1.setInt(2, flightID);
+			ps1.setInt(1, flightID);
 			ResultSet rs1 = ps1.executeQuery();
 			rs1.next();
 			capacity = rs1.getInt(seatClass);
