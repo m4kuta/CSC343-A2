@@ -375,6 +375,7 @@ public class Assignment2 {
 						String user = userInput.nextLine();
 						System.out.println("Enter password:");
 						String pass = userInput.nextLine();
+						
 						if (instance.connectDB(url, user, pass)) {
 							System.out.println("Connected");
 						}
@@ -386,17 +387,18 @@ public class Assignment2 {
 					case "3":
 						System.out.println("===Book===");
 						System.out.println("Enter passport id:");
-						int passID = userInput.nextInt();
+						int passID = Integer.parseInt(userInput.nextLine());
 						System.out.println("Enter flight id:");
-						int flightID = userInput.nextInt();
+						int flightID = Integer.parseInt(userInput.nextLine());
 						System.out.println("Enter seat class:");
 						String seatClass = userInput.nextLine();
+
 						if (instance.bookSeat(passID, flightID, seatClass)) {
 							System.out.println("Booked");
 							System.out.println("passID: " + passID);
 							System.out.println("passflightID: " + flightID);
 							System.out.println("seatClass: " + seatClass);
-						};
+						}
 						break;
 					case "4":
 						System.out.println("===Upgrade===");
