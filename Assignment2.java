@@ -155,8 +155,7 @@ public class Assignment2 {
 			// Get ticket price
 			String q4 = "select " + seatClass + " from price where flight_id = ?";
 			PreparedStatement ps4 = connection.prepareStatement(q4);
-			ps4.setString(1, seatClass);
-			ps4.setInt(2, flightID);
+			ps4.setInt(1, flightID);
 			ResultSet rs4 = ps4.executeQuery();
 			rs4.next();
 			int price = rs4.getInt(seatClass);
@@ -178,6 +177,7 @@ public class Assignment2 {
 		} 
 		catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
 		
 		return true;
