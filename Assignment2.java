@@ -101,8 +101,7 @@ public class Assignment2 {
 		try { 
 			// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
 			// Find total capacity for seatClass on flightID
-			seatClass = "capacity_" + seatClass;
-			String q1 = "select " + seatClass + " from flight join plane on plane = tail_number where id = ?";
+			String q1 = "select " + "capacity_" + seatClass + " from flight join plane on plane = tail_number where id = ?";
 			PreparedStatement ps1 = connection.prepareStatement(q1);
 			ps1.setInt(1, flightID);
 			ResultSet rs1 = ps1.executeQuery();
