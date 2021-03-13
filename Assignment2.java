@@ -110,7 +110,8 @@ public class Assignment2 {
 			
 			
 			// Find how many seats are already occupied for seatClass on flightID
-			String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class order by flight_id, seat_class";
+			// String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class order by flight_id, seat_class";
+			String q2 = "select COALESCE((select count(*) from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class), 0)";
 			PreparedStatement ps2 = connection.prepareStatement(q2);
 			ps2.setInt(1, flightID);
 			ps2.setString(2, seatClass);
@@ -369,15 +370,12 @@ public class Assignment2 {
 						break;
 					case "1":
 						System.out.println("===Connect===");
-						System.out.println("Enter URL:");
-						String url = userInput.nextLine();
+						String url = "jdbc:postgresql://localhost:5432/csc343h-";
+						String pass = "";
 						System.out.println("Enter username:");
 						String user = userInput.nextLine();
-						System.out.println("Enter password:");
-						String pass = userInput.nextLine();
-						
-						if (instance.connectDB(url, user, pass)) {
-							System.out.println("Connected");
+						if (instance.connectDB(url + user, user, pass)) {
+							System.out.println("Connected!\n");
 						}
 						break;
 					case "2":
