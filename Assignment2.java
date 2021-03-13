@@ -101,7 +101,7 @@ public class Assignment2 {
 		try { 
 			// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
 			// Find total capacity for seatClass on flightID
-			String q1 = "select " + "capacity_" + seatClass + " from flight join plane on plane = tail_number where id = ?";
+			String q1 = "select capacity_" + seatClass + " from flight join plane on plane = tail_number where id = ?";
 			PreparedStatement ps1 = connection.prepareStatement(q1);
 			ps1.setInt(1, flightID);
 			ResultSet rs1 = ps1.executeQuery();
@@ -113,7 +113,7 @@ public class Assignment2 {
 			String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class order by flight_id, seat_class";
 			PreparedStatement ps2 = connection.prepareStatement(q2);
 			ps2.setInt(1, flightID);
-			ps2.setObject(2, seatClass, Types.OTHER);
+			ps2.setString(2, seatClass);
 			ResultSet rs2 = ps2.executeQuery();
 			rs2.next();
 			booked = rs2.getInt("booked");
