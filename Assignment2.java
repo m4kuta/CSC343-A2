@@ -289,10 +289,10 @@ public class Assignment2 {
 				}
 				String updateSeating =
 						"update booking " +
-						"set seat_class = (?::seat_class), row = ?, letter = ? " +
-						"where id = ? ";
+						"set seat_class = (?::seat_class), row = (?), letter = (?) " +
+						"where id = (?) ";
 				PreparedStatement psUpdateSeating = connection.prepareStatement(updateSeating);
-				psUpdateSeating.setString(1, currentClass);
+				psUpdateSeating.setObject(1, currentClass, Types.OTHER);
 				psUpdateSeating.setInt(2, startBRow);
 				psUpdateSeating.setString(3, String.valueOf(startBSeatIndex + 'A' - 1));
 				psUpdateSeating.setInt(4, rsOverbooked.getInt("id"));
