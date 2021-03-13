@@ -289,7 +289,7 @@ public class Assignment2 {
 				}
 				String updateSeating =
 						"update booking " +
-						"set seat_class = ?, row = ?, letter = ? " +
+						"set seat_class = (?::seat_class), row = ?, letter = ? " +
 						"where id = ? ";
 				PreparedStatement psUpdateSeating = connection.prepareStatement(updateSeating);
 				psUpdateSeating.setString(1, currentClass);
