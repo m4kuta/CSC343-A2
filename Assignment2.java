@@ -161,7 +161,7 @@ public class Assignment2 {
 			int price = rs4.getInt(seatClass);
 
 			// Insert booking
-			String q5 = "insert into booking values (?, ?, ?, ?, ?, ?, ?, ?)";
+			String q5 = "insert into booking values (?, ?, ?, ?, ?, (?::seat_class), ?, ?)";
 			PreparedStatement ps5 = connection.prepareStatement(q5);
 			ps5.setInt(1, id);
 			ps5.setInt(2, passID);
