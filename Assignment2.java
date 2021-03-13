@@ -201,7 +201,7 @@ public class Assignment2 {
 			String SeatsQuery =
 				"select capacity_business, capacity_first " +
 				"from flight join plane on flight.plane = plane.tail_number " +
-				"where flight_id = ?";
+				"where id = ?";
 			PreparedStatement psSeats = connection.prepareStatement(SeatsQuery);
 			psSeats.setInt(1, flightID);
 			ResultSet rsSeats = psSeats.executeQuery();
