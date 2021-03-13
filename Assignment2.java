@@ -217,10 +217,10 @@ public class Assignment2 {
 
 			// Part 2: Retrieve the starting positions for the business and first class
 			String vacantBQuery =
-				"select seat_row, seat_letter " +
+				"select row, letter " +
 				"from booking " +
 				"where flight_id = ? and seat_class = 'business' " +
-				"order by seat_row desc, seat_letter desc";
+				"order by row desc, letter desc";
 			PreparedStatement psVacantB = connection.prepareStatement(vacantBQuery);
 			psVacantB.setInt(1, flightID);
 			ResultSet rsVacantB = psVacantB.executeQuery();
@@ -236,10 +236,10 @@ public class Assignment2 {
 			}
 
 			String vacantFQuery =
-				"select seat_row, seat_letter " +
+				"select row, letter " +
 				"from booking " +
 				"where flight_id = ? and seat_class = 'first' " +
-				"order by seat_row desc, seat_letter desc";
+				"order by row desc, letter desc";
 			PreparedStatement psVacantF = connection.prepareStatement(vacantFQuery);
 			psVacantF.setInt(1, flightID);
 			ResultSet rsVacantF = psVacantF.executeQuery();
@@ -258,7 +258,7 @@ public class Assignment2 {
 			String overbookedQuery =
 				"select * " +
 				"from booking " +
-				"where flight_id = ? and seat_class = 'economy' and seat_row is null and seat_letter is null " +
+				"where flight_id = ? and seat_class = 'economy' and row is null and letter is null " +
 				"order by datetime";
 			PreparedStatement psOverbooked = connection.prepareStatement(overbookedQuery);
 			psOverbooked.setInt(1, flightID);
@@ -289,7 +289,7 @@ public class Assignment2 {
 				}
 				String updateSeating =
 						"update booking " +
-						"set seat_class = ?, seat_row = ?, seat_letter = ? " +
+						"set seat_class = ?, row = ?, letter = ? " +
 						"where id = ? ";
 				PreparedStatement psUpdateSeating = connection.prepareStatement(updateSeating);
 				psUpdateSeating.setString(1, currentClass);
