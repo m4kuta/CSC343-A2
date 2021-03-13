@@ -365,7 +365,6 @@ public class Assignment2 {
 			if (instance.connectDB(url + user, user, pass)) {
 				System.out.println("\nConnected!\n");
 			}
-			break;
 	
 			boolean running = true;
 			while (running) {
