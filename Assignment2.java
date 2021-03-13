@@ -94,12 +94,12 @@ public class Assignment2 {
     */
    	public boolean bookSeat(int passID, int flightID, String seatClass) {
     	// Implement this method!
+		// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
 
 		int capacity;
 		int booked;
 
 		try { 
-			// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
 			// Find total capacity for seatClass on flightID
 			String q1 = "select capacity_" + seatClass + " from flight join plane on plane = tail_number where id = ?";
 			PreparedStatement ps1 = connection.prepareStatement(q1);
@@ -110,13 +110,14 @@ public class Assignment2 {
 			
 			
 			// Find how many seats are already occupied for seatClass on flightID
-			// String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class order by flight_id, seat_class";
+			// String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class";
 			String q2 = "select COALESCE((select count(*) from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class), 0)";
 			PreparedStatement ps2 = connection.prepareStatement(q2);
 			ps2.setInt(1, flightID);
 			ps2.setString(2, seatClass);
 			ResultSet rs2 = ps2.executeQuery();
 			rs2.next();
+			// TODO: Implement this for other queries
 			// if (!rs2.next()) {
 			// 	booked = 0;
 			// }
@@ -152,7 +153,7 @@ public class Assignment2 {
 			int id = rs3.getInt("max") + 1;
 
 			// Get ticket price
-			String q4 = "select ? from price where flight_id = ?";
+			String q4 = "select " + seatClass + " from price where flight_id = ?";
 			PreparedStatement ps4 = connection.prepareStatement(q4);
 			ps4.setString(1, seatClass);
 			ps4.setInt(2, flightID);
@@ -355,7 +356,7 @@ public class Assignment2 {
 		// You can put testing code in here. It will not affect our autotester.
 		try {
 			Assignment2 instance = new Assignment2();
-			System.out.println("Running the code!");				
+			System.out.println("===Connecting===");				
 			Scanner userInput = new Scanner(System.in);
 
 			String url = "jdbc:postgresql://localhost:5432/csc343h-";
@@ -363,7 +364,7 @@ public class Assignment2 {
 			System.out.println("Enter username:");
 			String user = userInput.nextLine();
 			if (instance.connectDB(url + user, user, pass)) {
-				System.out.println("\nConnected!\n");
+				System.out.println("===Connected===");
 			}
 	
 			boolean running = true;
@@ -375,9 +376,11 @@ public class Assignment2 {
 				String function = userInput.nextLine();
 				switch (function) {
 					case "0":
-						System.out.println("===Disconnect===");
-						running = false;
-						instance.disconnectDB();
+						System.out.println("===Disconnecting===");
+						if (instance.disconnectDB()) {
+							System.out.println("===Disconnected===");
+							running = false;
+						}
 						break;
 					case "1":
 						System.out.println("===Book===");
@@ -389,7 +392,7 @@ public class Assignment2 {
 						String seatClass = userInput.nextLine();
 
 						if (instance.bookSeat(passID, flightID, seatClass)) {
-							System.out.println("Booked");
+							System.out.println("===Booked===");
 							System.out.println("passID: " + passID);
 							System.out.println("passflightID: " + flightID);
 							System.out.println("seatClass: " + seatClass);
@@ -399,7 +402,9 @@ public class Assignment2 {
 						System.out.println("===Upgrade===");
 						System.out.println("Enter flight id:");
 						flightID = userInput.nextInt();
-						instance.upgrade(flightID);
+						if (instance.upgrade(flightID) != -1) {
+							System.out.println("===Upgraded===");
+						}
 						break;
 				}
 			}
