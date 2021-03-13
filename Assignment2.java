@@ -206,7 +206,7 @@ public class Assignment2 {
 			psSeats.setInt(1, flightID);
 			ResultSet rsSeats = psSeats.executeQuery();
 
-			if (!rsSeats.next()) return upgraded; // Non-existent flight, so no overbooked/upgraded passengers
+			if (!rsSeats.next()) return -1; // Non-existent flight, error.
 			int fSeats = rsSeats.getInt("capacity_first");
 			int lastFRow = fSeats == 0 ? 0 : fSeats / 6 + 1;
 			int lastFSeatIndex = fSeats % 6 + 1;
