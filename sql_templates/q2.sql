@@ -18,8 +18,6 @@ CREATE TABLE q2 (
 drop view if exists Flights cascade;
 drop view if exists FlightBookings cascade;
 drop view if exists FlightRefunds cascade;
--- drop view if exists AirlineYearRefunds cascade;
-
 
 -- Define views for your intermediate steps here:
 create view Flights as
@@ -69,32 +67,7 @@ where
     (intl = true and dep_delay > '08:00:00')) 
     and (arv_delay > (dep_delay)/2); 
 
--- select 
---     *,
---     case
---         when dep_country = arv_country then
---             case 
---                 when dep_delay >= '05:00:00' and (arv_delay > (dep_delay)/2) then
---                     case 
---                         when dep_delay < '10:00:00' then 0.35 * price
---                         when dep_delay >= '10:00:00' then 0.50 * price
---                     end
---                 else 0
---             end
---         when dep_country != arv_country then
---             case
---                 when dep_delay >= '08:00:00' and (arv_delay > (dep_delay)/2) then
---                     case 
---                         when dep_delay < '12:00:00' then 0.35 * price
---                         when dep_delay >= '12:00:00' then 0.50 * price 
---                     end
---                 else 0
---             end
---         else 0
---     end as refund
--- from FlightBookingInfo; 
 
--- Your query that answers the question goes below the "insert into" line:
 INSERT INTO q2
 select 
     airline, name, extract(year from s_dep) as year, seat_class, 
