@@ -37,8 +37,8 @@ create view Flights as
 select 
     F1.id as flight_id, F1.airline, airline.name, F1.country as dep_country, F2.country as arv_country, 
     case 
-        when F1.country = F2.country then true
-        when F1.country != F2.country then false
+        when F1.country != F2.country then true
+        when F1.country = F2.country then false
     end as intl,
     F1.s_dep, departure.datetime as a_dep,
     F1.s_arv, arrival.datetime as a_arv,
@@ -88,8 +88,8 @@ select
 from 
     FlightBookings
 where 
-    ((intl = false and dep_delay > '05:00:00') or 
-    (intl = true and dep_delay > '08:00:00')) 
+    ((intl = false and dep_delay >= '05:00:00') or 
+    (intl = true and dep_delay >= '08:00:00')) 
     and (arv_delay > (dep_delay)/2); 
 
 

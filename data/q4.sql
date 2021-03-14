@@ -30,10 +30,13 @@ group by tail_number;
 
 
 create view FlightsByPlane as
-select plane, flight_num, count(*) as total_passengers
-from flight join booking on flight.id = booking.flight_id
-group by plane, flight_num;
-
+select plane, flight.id as flight_id, count(*) as total_passengers
+from 
+	flight 
+	right join booking on flight.id = booking.flight_id
+	right join departure on flight.id = departure.flight_id
+group by plane, flight.id;
+-- Need to include flights that have no bookings and planes that had no flights
 
 create view PercentCapacity as
 select airline, tail_number, flight_num, total_cap, total_passengers, total_passengers/total_cap::float as percent_cap
