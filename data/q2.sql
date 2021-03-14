@@ -21,34 +21,59 @@ drop view if exists FlightRefunds cascade;
 
 -- Define views for your intermediate steps here:
 create view Flights as
+-- select 
+--     F1.id, F1.airline, F1.country as dep_country, F2.country as arv_country, 
+--     case 
+--         when F1.country = F2.country then true
+--         when F1.country != F2.country then false
+--     end as intl,
+--     F1.s_dep, F1.s_arv 
+-- from
+--     (flight join airport on outbound = code) as F1
+--     join 
+--     (flight join airport on inbound = code) as F2
+--     on F1.id = F2.id;
+
 select 
-    F1.id, F1.airline, F1.country as dep_country, F2.country as arv_country, 
+    F1.id as flight_id, F1.airline, airline.name, F1.country as dep_country, F2.country as arv_country, 
     case 
         when F1.country = F2.country then true
         when F1.country != F2.country then false
     end as intl,
-    F1.s_dep, F1.s_arv 
+    F1.s_dep, departure.datetime as a_dep,
+    F1.s_arv, arrival.datetime as a_arv,
+    (departure.datetime - F1.s_dep) as dep_delay, 
+    (arrival.datetime - F1.s_arv) as arv_delay  
 from
     (flight join airport on outbound = code) as F1
     join 
     (flight join airport on inbound = code) as F2
-    on F1.id = F2.id;
+    on F1.id = F2.id
+    join airline on (F1.airline = airline.code)
+    join departure on (F1.id = departure.flight_id)
+    join arrival on (F1.id = arrival.flight_id);
 
 
 create view FlightBookings as
+-- select 
+--     Flights.id as flight_id, airline, name, 
+--     dep_country, arv_country, intl, 
+--     s_dep, departure.datetime as a_dep, s_arv, arrival.datetime as a_arv, 
+--     (departure.datetime - s_dep) as dep_delay, 
+--     (arrival.datetime - s_arv) as arv_delay,
+--     booking.id as booking_id, seat_class, price 
+-- from 
+--     Flights
+--     join airline on (Flights.airline = airline.code)
+--     join departure on (Flights.id = departure.flight_id)
+--     join arrival on (Flights.id = arrival.flight_id)
+--     join booking on (Flights.id = booking.flight_id);
+
 select 
-    Flights.id as flight_id, airline, name, 
-    dep_country, arv_country, intl, 
-    s_dep, departure.datetime as a_dep, s_arv, arrival.datetime as a_arv, 
-    (departure.datetime - s_dep) as dep_delay, 
-    (arrival.datetime - s_arv) as arv_delay,
-    booking.id as booking_id, seat_class, price 
+    flights.*, booking.id as booking_id, seat_class, price 
 from 
     Flights
-    join airline on (Flights.airline = airline.code)
-    join departure on (Flights.id = departure.flight_id)
-    join arrival on (Flights.id = arrival.flight_id)
-    join booking on (Flights.id = booking.flight_id);
+    join booking on (Flights.flight_id = booking.flight_id);
 
 
 create view FlightRefunds as

@@ -10,3 +10,5 @@ id,pass_id,flight_id,datetime,price,seat_class,seat_row,seat_letter
 9,3,10,2019-08-07 16:05,2300,first,1,A
 10,6,10,2019-08-08 16:05,600,economy,,
 11,4,10,2019-08-09 16:05,1200,business,2,A
+12,8,1,2017-08-04 16:05,1000,first,1,A
+13,8,4,2017-08-04 16:05,1000,first,1,A
