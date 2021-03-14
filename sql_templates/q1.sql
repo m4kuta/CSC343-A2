@@ -4,7 +4,7 @@
 SET SEARCH_PATH TO air_travel, public;
 DROP TABLE IF EXISTS q1 CASCADE;
 
-CREATE TABLE q1 (
+CREATE TABLE q1 (q1
     pass_id INT,
     name VARCHAR(100),
     airlines INT
@@ -27,11 +27,13 @@ CREATE VIEW PassAirlines AS
         SELECT passenger.id AS id, flight.airline AS airline
         FROM booking
             JOIN flight ON booking.flight_id = flight.id
+            JOIN departure ON departure.flight_id = booking.flight_id
             FULL OUTER JOIN passenger ON passenger.id = booking.pass_id
+        WHERE "timestamp" < now()
         ) AS airline_bookings
     GROUP BY id;
 
 -- Your query that answers the question goes below the "insert into" line:
 INSERT INTO q1
-SELECT *
-FROM PassIDFullName NATURAL JOIN PassAirlines;
+SELECT id, "name", COALESCE(airlines, 0)
+FROM PassIDFullName NATURAL FULL JOIN PassAirlines;
