@@ -4,7 +4,7 @@
 SET SEARCH_PATH TO air_travel, public;
 DROP TABLE IF EXISTS q1 CASCADE;
 
-CREATE TABLE q1 (
+CREATE TABLE q1 (q1
     pass_id INT,
     name VARCHAR(100),
     airlines INT
