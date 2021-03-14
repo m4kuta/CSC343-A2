@@ -29,7 +29,7 @@ CREATE VIEW PassAirlines AS
             JOIN flight ON booking.flight_id = flight.id
             JOIN departure ON departure.flight_id = booking.flight_id
             FULL OUTER JOIN passenger ON passenger.id = booking.pass_id
-        WHERE "timestamp" < now()
+        WHERE departure.datetime < now()
         ) AS airline_bookings
     GROUP BY id;
 
