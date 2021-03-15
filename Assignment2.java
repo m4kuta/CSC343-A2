@@ -11,7 +11,7 @@ import java.sql.*;
 import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner; // TODO: Are we allowed to import this?
+import java.util.Scanner;
 import java.lang.Math;
 
 public class Assignment2 {
@@ -33,17 +33,17 @@ public class Assignment2 {
 	}
 
 	/**
-	 * Connects and sets the search path.
-	 *
-	 * Establishes a connection to be used for this session, assigning it to
-	 * the instance variable 'connection'.  In addition, sets the search
-	 * path to 'air_travel, public'.
-	 *
-	 * @param  url       the url for the database
-	 * @param  username  the username to connect to the database
-	 * @param  password  the password to connect to the database
-	 * @return           true if connecting is successful, false otherwise
-	 */
+	* Connects and sets the search path.
+	*
+	* Establishes a connection to be used for this session, assigning it to
+	* the instance variable 'connection'.  In addition, sets the search
+	* path to 'air_travel, public'.
+	*
+	* @param  url       the url for the database
+	* @param  username  the username to connect to the database
+	* @param  password  the password to connect to the database
+	* @return           true if connecting is successful, false otherwise
+	*/
 	public boolean connectDB(String URL, String username, String password) {
 		// Implement this method!
 		try {
@@ -64,10 +64,10 @@ public class Assignment2 {
 	}
 
 	/**
-	 * Closes the database connection.
-	 *
-	 * @return true if the closing was successful, false otherwise
-	 */
+	* Closes the database connection.
+	*
+	* @return true if the closing was successful, false otherwise
+	*/
 	public boolean disconnectDB() {
 		try {
 			connection.close();
@@ -77,31 +77,33 @@ public class Assignment2 {
 		return true;
 	}
    
-   /* ======================= Airline-related methods ======================= */
+  /* ======================= Airline-related methods ======================= */
 
-   /**
-    * Attempts to book a flight for a passenger in a particular seat class. 
-    * Does so by inserting a row into the Booking table.
-    *
-    * Read handout for information on how seats are booked.
-    * Returns false if seat can't be booked, or if passenger or flight cannot be found.
-    *
-    * 
-    * @param  passID     id of the passenger
-    * @param  flightID   id of the flight
-    * @param  seatClass  the class of the seat (economy, business, or first) 
-    * @return            true if the booking was successful, false otherwise. 
-    */
-   	public boolean bookSeat(int passID, int flightID, String seatClass) {
-    	// Implement this method!
+	/**
+	* Attempts to book a flight for a passenger in a particular seat class. 
+	* Does so by inserting a row into the Booking table.
+	*
+	* Read handout for information on how seats are booked.
+	* Returns false if seat can't be booked, or if passenger or flight cannot be 
+	* found.
+	*
+	* 
+	* @param  passID     id of the passenger
+	* @param  flightID   id of the flight
+	* @param  seatClass  the class of the seat (economy, business, or first) 
+	* @return            true if the booking was successful, false otherwise. 
+	*/
+	public boolean bookSeat(int passID, int flightID, String seatClass) {
+		// Implement this method!
 		double capacityFirst;
 		double capacityBusiness;
 		double capacityEconomy;
 		int booked;
 
 		try { 
-			// Find total capacity for each seat class on flightID
-			String q1 = "select * from flight join plane on plane = tail_number where id = ?";
+			// Find total capacity of each seat class on flightID
+			String q1 = 
+			"select * from flight join plane on plane = tail_number where id = ?";
 			PreparedStatement ps1 = connection.prepareStatement(q1);
 			ps1.setInt(1, flightID);
 			ResultSet rs1 = ps1.executeQuery();
@@ -114,8 +116,9 @@ public class Assignment2 {
 			
 			
 			// Find how many seats are already occupied for seatClass on flightID
-			String q2 = "select COALESCE((select count(*) from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class), 0)";
-			// String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class";
+			String q2 = 
+			"select COALESCE((select count(*) from booking where flight_id = ? " 
+			+ "and seat_class = (?::seat_class) group by flight_id, seat_class), 0)";
 			PreparedStatement ps2 = connection.prepareStatement(q2);
 			ps2.setInt(1, flightID);
 			ps2.setString(2, seatClass);
@@ -159,7 +162,6 @@ public class Assignment2 {
 			} else {return false;}
 		}
 		
-
 		try {
 			// Get latest booking.id
 			String q3 = "select COALESCE((select max(id) from booking), 0);";
@@ -181,7 +183,8 @@ public class Assignment2 {
 			int price = rs4.getInt(seatClass);
 
 			// Insert booking
-			String q5 = "insert into booking values (?, ?, ?, ?, ?, (?::seat_class), ?, ?)";
+			String q5 = 
+			"insert into booking values (?, ?, ?, ?, ?, (?::seat_class), ?, ?)";
 			PreparedStatement ps5 = connection.prepareStatement(q5);
 			ps5.setInt(1, id);
 			ps5.setInt(2, passID);
@@ -197,14 +200,13 @@ public class Assignment2 {
 				ps5.setString(8, letter);
 			}
 			ps5.executeUpdate();
+			return true;
 		} 
 		catch (SQLException e) {
 			e.printStackTrace();
 			return false;
-		}
-		
-		return true;
-   	}
+		}		
+	}
 
 	/**
 	* Attempts to upgrade overbooked economy passengers to business class
@@ -353,7 +355,7 @@ public class Assignment2 {
 	}
 
 
-	/* ----------------------- Helper functions below  ------------------------- */
+	/* ----------------------- Helper functions below  ------------------------ */
 
 	// A helpful function for adding a timestamp to new bookings.
 	// Example of setting a timestamp in a PreparedStatement:
@@ -370,7 +372,6 @@ public class Assignment2 {
 	}
 
 	// Add more helper functions below if desired.
-
 	
 
   /* ----------------------- Main method below  ------------------------- */
@@ -416,7 +417,8 @@ public class Assignment2 {
 
 						if (instance.bookSeat(passID, flightID, seatClass)) {
 							System.out.println("[Booked]");
-							String bookingInfo = String.format("passID: %d, flightID: %d, seatClass: %s", passID, flightID, seatClass);
+							String bookingInfo = String.format("passID: %d, flightID: %d," 
+							+ " seatClass: %s", passID, flightID, seatClass);
 							System.out.println(bookingInfo);
 						}
 						break;
