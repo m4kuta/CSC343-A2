@@ -171,8 +171,13 @@ public class Assignment2 {
 			ps5.setTimestamp(4, getCurrentTimeStamp());
 			ps5.setInt(5, price); 
 			ps5.setString(6, seatClass);
-			ps5.setInt(7, row);
-			ps5.setString(8, letter);
+			if (row == null) { // Use SQL's NULL in place
+				ps5.setNull(7, Types.INTEGER);
+				ps5.setNull(8, Types.CHAR);
+			} else {
+				ps5.setInt(7, row);
+				ps5.setString(8, letter);
+			}
 			ps5.executeUpdate();
 
 			// TODO: Do we need to create a new passenger? Don't think so according to this function's Javadoc.
