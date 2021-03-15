@@ -1,6 +1,7 @@
 ssh fanhaoli@dbsrv1.cdf.utoronto.ca
 
 javac Assignment2.java
+
 java -cp /local/packages/jdbc-postgresql/postgresql-42.2.4.jar: Assignment2
 
 psql csc343h-fanhaoli

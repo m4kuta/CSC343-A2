@@ -139,7 +139,7 @@ public class Assignment2 {
 			row = booked / 6 + 1;
 			letter = seatLetters.get(booked % 6);
 		} 
-		else {
+		else if (seatClass.equals("economy")) {
 			row = null;
 			letter = null;
 		}
