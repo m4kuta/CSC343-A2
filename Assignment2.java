@@ -94,7 +94,6 @@ public class Assignment2 {
     */
    	public boolean bookSeat(int passID, int flightID, String seatClass) {
     	// Implement this method!
-		// TODO: Check for scenario where queries fail (e.g. flight cannot be found) or produce unintended resutls (e.g. 0 rows)?
 		double capacityFirst;
 		double capacityBusiness;
 		double capacityEconomy;
@@ -106,7 +105,9 @@ public class Assignment2 {
 			PreparedStatement ps1 = connection.prepareStatement(q1);
 			ps1.setInt(1, flightID);
 			ResultSet rs1 = ps1.executeQuery();
-			rs1.next();
+			if (!rs1.next()) {
+				return false;
+			}
 			capacityFirst = rs1.getInt("capacity_first");
 			capacityBusiness = rs1.getInt("capacity_business");
 			capacityEconomy = rs1.getInt("capacity_economy");
@@ -119,11 +120,9 @@ public class Assignment2 {
 			ps2.setInt(1, flightID);
 			ps2.setString(2, seatClass);
 			ResultSet rs2 = ps2.executeQuery();
-			rs2.next();
-			// TODO: Implement this for other queries?
-			// if (!rs2.next()) {
-			// 	booked = 0;
-			// }
+			if (!rs2.next()) {
+				return false;
+			}
 			booked = rs2.getInt("coalesce");
 		} 
 		catch (SQLException e) {
@@ -155,7 +154,6 @@ public class Assignment2 {
 				row = (int) startRow + booked / 6;
 				letter = seatLetters.get(booked % 6);
 			} else if (capacityEconomy - booked > -10) {
-				// TODO: Test null case, currently get exception
 				row = null;
 				letter = null;
 			} else {return false;}
@@ -164,18 +162,22 @@ public class Assignment2 {
 
 		try {
 			// Get latest booking.id
-			String q3 = "select max(id) from booking";
+			String q3 = "select COALESCE((select max(id) from booking), 0);";
 			PreparedStatement ps3 = connection.prepareStatement(q3);
 			ResultSet rs3 = ps3.executeQuery();
-			rs3.next();
+			if (!rs3.next()) {
+				return false;
+			}
 			int id = rs3.getInt("max") + 1;
 
 			// Get seat price
-			String q4 = "select " + seatClass + " from price where flight_id = ?"; // TODO: Double check if this is correct way to get price
+			String q4 = "select " + seatClass + " from price where flight_id = ?";
 			PreparedStatement ps4 = connection.prepareStatement(q4);
 			ps4.setInt(1, flightID);
 			ResultSet rs4 = ps4.executeQuery();
-			rs4.next();
+			if (!rs4.next()) {
+				return false;
+			}
 			int price = rs4.getInt(seatClass);
 
 			// Insert booking
@@ -195,8 +197,6 @@ public class Assignment2 {
 				ps5.setString(8, letter);
 			}
 			ps5.executeUpdate();
-
-			// TODO: Do we need to create a new passenger? Don't think so according to this function's Javadoc.
 		} 
 		catch (SQLException e) {
 			e.printStackTrace();
