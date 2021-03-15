@@ -94,7 +94,7 @@ public class Assignment2 {
     */
    	public boolean bookSeat(int passID, int flightID, String seatClass) {
     	// Implement this method!
-		// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
+		// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)?
 
 		int capacity;
 		int booked;
@@ -117,7 +117,7 @@ public class Assignment2 {
 			ps2.setString(2, seatClass);
 			ResultSet rs2 = ps2.executeQuery();
 			rs2.next();
-			// TODO: Implement this for other queries
+			// TODO: Implement this for other queries?
 			// if (!rs2.next()) {
 			// 	booked = 0;
 			// }
