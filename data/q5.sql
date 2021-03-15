@@ -29,7 +29,7 @@ SELECT n FROM q5_parameters;
 INSERT INTO q5
 with recursive Hop as (
 	select 
-		1 as n, id as flight_id, outbound, inbound, s_dep, s_arv 
+		1 as n, id, outbound, inbound, s_dep, s_arv 
 	from 
 		flight
 	where 
@@ -38,7 +38,7 @@ with recursive Hop as (
 	union all
 
 	select 
-		n + 1, flight.id, flight.outbound, flight.inbound, flight.s_dep, flight.s_arv
+		n + 1 as n, flight.id, flight.outbound, flight.inbound, flight.s_dep, flight.s_arv
 	from
 		Hop cross join Flight
 	where 
@@ -46,4 +46,35 @@ with recursive Hop as (
 ) 
 select inbound as destination, n as num_flights
 from Hop 
-order by n, flight_id;
+order by n, id;
+
+-- create TEMPORARY view hop1 as
+-- select 
+-- 	1 as n, id, outbound, inbound, s_dep, s_arv 
+-- from 
+-- 	flight
+-- where 
+-- 	s_dep >= (select day from day) and outbound = 'YYZ'
+-- ;
+
+
+-- create TEMPORARY view hop2 as
+-- select 
+-- 	n + 1 as n, flight.id, flight.outbound, flight.inbound, flight.s_dep, flight.s_arv
+-- from
+-- 	hop1 cross join Flight
+-- where 
+-- 	n < (select n from n) and hop1.inbound = Flight.outbound and (Flight.s_dep - hop1.s_arv) <= '24:00:00' and (Flight.s_dep - hop1.s_arv) >= '00:00:00'
+-- ;
+
+
+-- create TEMPORARY view hop3 as 
+-- select 
+-- 	n + 1 as n, flight.id, flight.outbound, flight.inbound, flight.s_dep, flight.s_arv
+-- from
+-- 	hop2 cross join Flight
+-- where 
+-- 	n < (select n from n) and hop2.inbound = Flight.outbound and (Flight.s_dep - hop2.s_arv) <= '24:00:00' and (Flight.s_dep - hop2.s_arv) >= '00:00:00'
+-- ;
+
+-- select * from hop1 union all select * from hop2 union all select * from hop3; 
