@@ -296,8 +296,8 @@ public class Assignment2 {
 						"where id = ? ";
 				PreparedStatement psUpdateSeating = connection.prepareStatement(updateSeating);
 				psUpdateSeating.setObject(1, currentClass, Types.OTHER);
-				psUpdateSeating.setInt(2, startBRow);
-				psUpdateSeating.setString(3, String.valueOf((char)(startBSeatIndex + 'A' - 1)));
+				psUpdateSeating.setInt(2, currRow);
+				psUpdateSeating.setString(3, String.valueOf((char)(currSeatIndex + 'A' - 1)));
 				psUpdateSeating.setInt(4, rsOverbooked.getInt("id"));
 				psUpdateSeating.executeUpdate();
 				upgraded++;
