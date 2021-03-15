@@ -11,9 +11,7 @@ import java.sql.*;
 import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
-
-// TODO: Is this allowed?
-import java.util.Scanner;
+import java.util.Scanner; // TODO: Are we allowed to import this?
 
 public class Assignment2 {
 	/////////
@@ -48,6 +46,7 @@ public class Assignment2 {
 	public boolean connectDB(String URL, String username, String password) {
 		// Implement this method!
 		try {
+			// Connect
 			connection = DriverManager.getConnection(URL, username, password);
 			
 			// Set search path
@@ -94,8 +93,7 @@ public class Assignment2 {
     */
    	public boolean bookSeat(int passID, int flightID, String seatClass) {
     	// Implement this method!
-		// TODO: Check for scenario where queries fail (i.e. if flight cannot be found)
-
+		// TODO: Check for scenario where queries fail (e.g. flight cannot be found) or produce unintended resutls (e.g. 0 rows)
 		int capacity;
 		int booked;
 
@@ -110,14 +108,14 @@ public class Assignment2 {
 			
 			
 			// Find how many seats are already occupied for seatClass on flightID
-			// String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class";
 			String q2 = "select COALESCE((select count(*) from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class), 0)";
+			// String q2 = "select count(*) as booked from booking where flight_id = ? and seat_class = (?::seat_class) group by flight_id, seat_class";
 			PreparedStatement ps2 = connection.prepareStatement(q2);
 			ps2.setInt(1, flightID);
 			ps2.setString(2, seatClass);
 			ResultSet rs2 = ps2.executeQuery();
 			rs2.next();
-			// TODO: Implement this for other queries
+			// TODO: Implement this for other queries?
 			// if (!rs2.next()) {
 			// 	booked = 0;
 			// }
@@ -152,8 +150,8 @@ public class Assignment2 {
 			rs3.next();
 			int id = rs3.getInt("max") + 1;
 
-			// Get ticket price
-			String q4 = "select " + seatClass + " from price where flight_id = ?";
+			// Get seat price
+			String q4 = "select " + seatClass + " from price where flight_id = ?"; // TODO: Double check if this is correct way to get price
 			PreparedStatement ps4 = connection.prepareStatement(q4);
 			ps4.setInt(1, flightID);
 			ResultSet rs4 = ps4.executeQuery();
@@ -167,13 +165,13 @@ public class Assignment2 {
 			ps5.setInt(2, passID);
 			ps5.setInt(3, flightID);
 			ps5.setTimestamp(4, getCurrentTimeStamp());
-			ps5.setInt(5, price); // TODO: Double check this
+			ps5.setInt(5, price); 
 			ps5.setString(6, seatClass);
 			ps5.setInt(7, row);
 			ps5.setString(8, letter);
 			ps5.executeUpdate();
 
-			// TODO: Do we need to create a new passenger? Don't think so according to this function's Javadoc
+			// TODO: Do we need to create a new passenger? Don't think so according to this function's Javadoc.
 		} 
 		catch (SQLException e) {
 			e.printStackTrace();
@@ -393,9 +391,7 @@ public class Assignment2 {
 
 						if (instance.bookSeat(passID, flightID, seatClass)) {
 							System.out.println("[Booked]");
-							System.out.println("passID: " + passID);
-							System.out.println("passflightID: " + flightID);
-							System.out.println("seatClass: " + seatClass);
+							System.out.println("(passID: " + passID + ", passflightID: " + flightID + ", seatClass: " + seatClass + ")");
 						}
 						break;
 					case "2":
