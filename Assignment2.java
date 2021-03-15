@@ -140,15 +140,16 @@ public class Assignment2 {
 			if (capacityFirst - booked > 0) {
 				row = booked / 6 + 1;
 				letter = seatLetters.get(booked % 6);
-			}
+			} else {return false;}
 		}
 		else if (seatClass.equalsIgnoreCase("business")) {
 			if (capacityBusiness - booked > 0) {
 				startRow = Math.ceil(capacityFirst / 6) + 1;
 				row = (int) startRow + booked / 6;
 				letter = seatLetters.get(booked % 6);
-			}
-		else if (seatClass.equalsIgnoreCase("economy")) {
+			} else {return false;}
+		}
+		else {
 			if (capacityEconomy - booked > 0) {
 				startRow = Math.ceil((capacityFirst + capacityBusiness) / 6) + 1;
 				row = (int) startRow + booked / 6;
@@ -157,9 +158,7 @@ public class Assignment2 {
 				// TODO: Test null case, currently get exception
 				row = null;
 				letter = null;
-			} 
-		else {
-			return false;
+			} else {return false;}
 		}
 		
 
@@ -372,11 +371,8 @@ public class Assignment2 {
 
 	// Add more helper functions below if desired.
 
-	private  rowSeat(int capacityFirst, int capacity, String seatClass) {
+	
 
-	}
-
-  
   /* ----------------------- Main method below  ------------------------- */
 
 	public static void main(String[] args) {
