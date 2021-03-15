@@ -89,4 +89,6 @@ select
 from 
 	PlaneCapacity
 group by 
-	airline, tail_number;
+	airline, tail_number
+order by
+    airline, tail_number;

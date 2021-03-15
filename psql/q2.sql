@@ -74,4 +74,6 @@ select
 from 
     FlightRefunds
 group by 
+    airline, name, year, seat_class
+order by
     airline, name, year, seat_class;
