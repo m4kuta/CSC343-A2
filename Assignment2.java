@@ -215,11 +215,12 @@ public class Assignment2 {
 	*
 	* Upgrades should happen in order of earliest booking timestamp first.
 	*
-	* If economy passengers are left over without a seat (i.e. more than 10 overbooked passengers or not enough higher class seats), 
+	* If economy passengers are left over without a seat (i.e. more than 10 
+  * overbooked passengers or not enough higher class seats), 
 	* remove their bookings from the database.
 	* 
 	* @param  flightID  The flight to upgrade passengers in.
-	* @return           the number of passengers upgraded, or -1 if an error occured.
+	* @return the number of passengers upgraded, or -1 if an error occured.
     */
 	public int upgrade(int flightID) {
 		int startBRow, startBSeatIndex, startFRow, startFSeatIndex;
@@ -384,7 +385,7 @@ public class Assignment2 {
 	}
 
 
-	/* ----------------------- Helper functions below  ------------------------ */
+	/* ---------------------- Helper functions below  ---------------------- */
 
 	// A helpful function for adding a timestamp to new bookings.
 	// Example of setting a timestamp in a PreparedStatement:
@@ -403,7 +404,7 @@ public class Assignment2 {
 	// Add more helper functions below if desired.
 	
 
-  /* ----------------------- Main method below  ------------------------- */
+  /* ------------------------- Main method below  ------------------------- */
 
 	public static void main(String[] args) {
 		// You can put testing code in here. It will not affect our autotester.
