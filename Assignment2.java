@@ -45,7 +45,6 @@ public class Assignment2 {
 	* @return           true if connecting is successful, false otherwise
 	*/
 	public boolean connectDB(String URL, String username, String password) {
-		// Implement this method!
 		try {
 			// Connect
 			connection = DriverManager.getConnection(URL, username, password);
@@ -223,8 +222,8 @@ public class Assignment2 {
 	* @return           the number of passengers upgraded, or -1 if an error occured.
     */
 	public int upgrade(int flightID) {
-		// TODO: test me
-		int startBRow, startBSeatIndex, startFRow, startFSeatIndex, upgraded = 0;
+		int startBRow, startBSeatIndex, startFRow, startFSeatIndex;
+		int upgraded = 0;
 		try {
 			// Part 1: Retrieve the plane's business and first class capacity
 			String SeatsQuery =
@@ -243,13 +242,14 @@ public class Assignment2 {
 			int lastBRow = bSeats == 0 ? 0 : lastFRow + bSeats / 6 + 1;
 			int lastBSeatIndex = bSeats % 6 + 1;
 
-			// Part 2: Retrieve the starting positions for the business and first class
+			// Part 2: Retrieve starting positions for business and first class
 			String vacantBQuery =
 				"select row, letter " +
 				"from booking " +
 				"where flight_id = ? and seat_class = 'business' " +
 				"order by row desc, letter desc";
-			PreparedStatement psVacantB = connection.prepareStatement(vacantBQuery);
+			PreparedStatement psVacantB =
+					connection.prepareStatement(vacantBQuery);
 			psVacantB.setInt(1, flightID);
 			ResultSet rsVacantB = psVacantB.executeQuery();
 
@@ -258,7 +258,8 @@ public class Assignment2 {
 				startBSeatIndex = 1;
 			} else {
 				startBRow = rsVacantB.getInt("row");
-				startBSeatIndex = rsVacantB.getString("letter").charAt(0) - 'A' + 1;
+				startBSeatIndex =
+						rsVacantB.getString("letter").charAt(0) - 'A' + 1;
 				if (startBSeatIndex == 6) startBRow++;
 				startBSeatIndex = startBSeatIndex % 6 + 1;
 			}
@@ -268,7 +269,8 @@ public class Assignment2 {
 				"from booking " +
 				"where flight_id = ? and seat_class = 'first' " +
 				"order by row desc, letter desc";
-			PreparedStatement psVacantF = connection.prepareStatement(vacantFQuery);
+			PreparedStatement psVacantF =
+					connection.prepareStatement(vacantFQuery);
 			psVacantF.setInt(1, flightID);
 			ResultSet rsVacantF = psVacantF.executeQuery();
 
@@ -277,23 +279,29 @@ public class Assignment2 {
 				startFSeatIndex = 1;
 			} else {
 				startFRow = rsVacantF.getInt("row");
-				startFSeatIndex = rsVacantF.getString("letter").charAt(0) - 'A' + 1;
+				startFSeatIndex =
+						rsVacantF.getString("letter").charAt(0) - 'A' + 1;
 				if (startFSeatIndex == 6) startFRow++;
 				startFSeatIndex = startFSeatIndex % 6 + 1;
 			}
 
-			// Part 3: Retrieve all passengers booked by flight ID with null values, sort by earliest booking
+			// Part 3: Retrieve all passengers booked by flight ID with null
+			// values, sort by earliest booking
 			String overbookedQuery =
 				"select * " +
 				"from booking " +
-				"where flight_id = ? and seat_class = 'economy' and row is null and letter is null " +
+				"where flight_id = ? " +
+						"and seat_class = 'economy' " +
+						"and row is null " +
+						"and letter is null " +
 				"order by datetime";
-			PreparedStatement psOverbooked = connection.prepareStatement(overbookedQuery);
+			PreparedStatement psOverbooked =
+					connection.prepareStatement(overbookedQuery);
 			psOverbooked.setInt(1, flightID);
 			ResultSet rsOverbooked = psOverbooked.executeQuery();
 
 			boolean remaining = rsOverbooked.next();
-			if (!remaining) return upgraded; // No overbooked passengers, so zero upgrades done.
+			if (!remaining) return upgraded; // No overbooked passengers.
 			String currentClass = "business";
 			int currRow = startBRow;
 			int currSeatIndex = startBSeatIndex;
@@ -304,10 +312,12 @@ public class Assignment2 {
 			while (remaining
 					&& ((currentClass.equals("business")
 						|| currRow < lastRow
-						|| (currRow == lastRow && currSeatIndex < lastSeatIndex)))) {
+						|| (currRow == lastRow
+							&& currSeatIndex < lastSeatIndex)))) {
 				if (currentClass.equals("business")
 					&& (currRow > lastRow
-						|| (currRow == lastRow && currSeatIndex >= lastSeatIndex))) {
+						|| (currRow == lastRow
+							&& currSeatIndex >= lastSeatIndex))) {
 					currentClass = "first";
 					currRow = startFRow;
 					currSeatIndex = startFSeatIndex;
@@ -319,11 +329,25 @@ public class Assignment2 {
 						"update booking " +
 						"set seat_class = ?::seat_class, row = ?, letter = ? " +
 						"where id = ? ";
-				PreparedStatement psUpdateSeating = connection.prepareStatement(updateSeating);
-				psUpdateSeating.setObject(1, currentClass, Types.OTHER);
-				psUpdateSeating.setInt(2, currRow);
-				psUpdateSeating.setString(3, String.valueOf((char)(currSeatIndex + 'A' - 1)));
-				psUpdateSeating.setInt(4, rsOverbooked.getInt("id"));
+				PreparedStatement psUpdateSeating =
+						connection.prepareStatement(updateSeating);
+				psUpdateSeating.setObject(
+						1,
+						currentClass,
+						Types.OTHER
+				);
+				psUpdateSeating.setInt(
+						2,
+						currRow
+				);
+				psUpdateSeating.setString(
+						3,
+						String.valueOf((char)(currSeatIndex + 'A' - 1))
+				);
+				psUpdateSeating.setInt(
+						4,
+						rsOverbooked.getInt("id")
+				);
 				psUpdateSeating.executeUpdate();
 				upgraded++;
 
@@ -333,14 +357,19 @@ public class Assignment2 {
 				remaining = rsOverbooked.next();
 			}
 
-			// Part 5: If Business and First class is full, delete remaining overbooked passengers
+			// Part 5: If Business and First class is full,
+			// delete remaining overbooked passengers
 			if (remaining) {
 				do {
 					String deleteBooking =
 						"delete from booking " +
 						"where id = ?";
-					PreparedStatement psDeleteBooking = connection.prepareStatement(deleteBooking);
-					psDeleteBooking.setInt(1, rsOverbooked.getInt("id"));
+					PreparedStatement psDeleteBooking =
+							connection.prepareStatement(deleteBooking);
+					psDeleteBooking.setInt(
+							1,
+							rsOverbooked.getInt("id")
+					);
 					psDeleteBooking.executeUpdate();
 
 					remaining = rsOverbooked.next();
