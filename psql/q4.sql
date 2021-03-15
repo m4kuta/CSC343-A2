@@ -76,11 +76,16 @@ order by
 INSERT INTO q4
 select 
 	airline, tail_number, 
-	count(case when 0.0 <= percent_cap and percent_cap < 0.2 then 1 end) as very_low, 
-	count(case when 0.2 <= percent_cap and percent_cap < 0.4 then 1 end) as low, 
-	count(case when 0.4 <= percent_cap and percent_cap < 0.6 then 1 end) as fair, 
-	count(case when 0.6 <= percent_cap and percent_cap < 0.8 then 1 end) as normal, 
-	count(case when 0.8 <= percent_cap then 1 end) as high
+	count(case when 0.0 <= percent_cap and percent_cap < 0.2 then 1 end) 
+	as very_low, 
+	count(case when 0.2 <= percent_cap and percent_cap < 0.4 then 1 end) 
+	as low, 
+	count(case when 0.4 <= percent_cap and percent_cap < 0.6 then 1 end) 
+	as fair, 
+	count(case when 0.6 <= percent_cap and percent_cap < 0.8 then 1 end) 
+	as normal, 
+	count(case when 0.8 <= percent_cap then 1 end) 
+	as high
 from 
 	PlaneCapacity
 group by 
