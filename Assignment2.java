@@ -141,6 +141,9 @@ public class Assignment2 {
 			row = null;
 			letter = null;
 		}
+		else {
+			return false;
+		}
 		
 		try {
 			// Get latest booking.id
