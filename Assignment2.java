@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner; // TODO: Are we allowed to import this?
+import java.lang.Math;
 
 public class Assignment2 {
 	/////////
@@ -94,17 +95,21 @@ public class Assignment2 {
    	public boolean bookSeat(int passID, int flightID, String seatClass) {
     	// Implement this method!
 		// TODO: Check for scenario where queries fail (e.g. flight cannot be found) or produce unintended resutls (e.g. 0 rows)?
-		int capacity;
+		double capacityFirst;
+		double capacityBusiness;
+		double capacityEconomy;
 		int booked;
 
 		try { 
-			// Find total capacity for seatClass on flightID
-			String q1 = "select capacity_" + seatClass + " from flight join plane on plane = tail_number where id = ?";
+			// Find total capacity for each seat class on flightID
+			String q1 = "select * from flight join plane on plane = tail_number where id = ?";
 			PreparedStatement ps1 = connection.prepareStatement(q1);
 			ps1.setInt(1, flightID);
 			ResultSet rs1 = ps1.executeQuery();
 			rs1.next();
-			capacity = rs1.getInt("capacity_" + seatClass);
+			capacityFirst = rs1.getInt("capacity_first");
+			capacityBusiness = rs1.getInt("capacity_business");
+			capacityEconomy = rs1.getInt("capacity_economy");
 			
 			
 			// Find how many seats are already occupied for seatClass on flightID
@@ -127,26 +132,37 @@ public class Assignment2 {
 		}
 
 		// Determine appropriate row and letter
+		double startRow;
 		Integer row;
 		String letter;
 
-		if (capacity - booked <= -10) {
-			return false;
-		} 
-		else if (capacity - booked > 0) {
-			row = 
-			row = booked / 6 + 1;
-			letter = seatLetters.get(booked % 6);
-		} 
-		else if (seatClass.equals("economy")) {
-			row = null;
-			letter = null;
-			// TODO: Test null case, currently get exception
+		if (seatClass.equalsIgnoreCase("first")) {
+			if (capacityFirst - booked > 0) {
+				row = booked / 6 + 1;
+				letter = seatLetters.get(booked % 6);
+			}
 		}
+		else if (seatClass.equalsIgnoreCase("business")) {
+			if (capacityBusiness - booked > 0) {
+				startRow = Math.ceil(capacityFirst / 6) + 1;
+				row = (int) startRow + booked / 6;
+				letter = seatLetters.get(booked % 6);
+			}
+		else if (seatClass.equalsIgnoreCase("economy")) {
+			if (capacityEconomy - booked > 0) {
+				startRow = Math.ceil((capacityFirst + capacityBusiness) / 6) + 1;
+				row = (int) startRow + booked / 6;
+				letter = seatLetters.get(booked % 6);
+			} else if (capacityEconomy - booked > -10) {
+				// TODO: Test null case, currently get exception
+				row = null;
+				letter = null;
+			} 
 		else {
 			return false;
 		}
 		
+
 		try {
 			// Get latest booking.id
 			String q3 = "select max(id) from booking";
@@ -356,6 +372,9 @@ public class Assignment2 {
 
 	// Add more helper functions below if desired.
 
+	private  rowSeat(int capacityFirst, int capacity, String seatClass) {
+
+	}
 
   
   /* ----------------------- Main method below  ------------------------- */
