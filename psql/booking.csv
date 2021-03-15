@@ -16,4 +16,4 @@ id,pass_id,flight_id,datetime,price,seat_class,seat_row,seat_letter
 15,7,11,2017-08-04 16:05,1000,first,1,A
 16,9,3,2017-08-09 19:21,1000,first,1,A
 17,10,3,2017-06-07 4:57,500,business,6,A
-18,11,3,2017-08-21 12:32,100,economy,12,A
+18,11,3,2017-08-21 12:32,100,economy,18,A
