@@ -93,7 +93,7 @@ public class Assignment2 {
     */
    	public boolean bookSeat(int passID, int flightID, String seatClass) {
     	// Implement this method!
-		// TODO: Check for scenario where queries fail (e.g. flight cannot be found) or produce unintended resutls (e.g. 0 rows)
+		// TODO: Check for scenario where queries fail (e.g. flight cannot be found) or produce unintended resutls (e.g. 0 rows)?
 		int capacity;
 		int booked;
 
@@ -140,6 +140,7 @@ public class Assignment2 {
 		else if (seatClass.equals("economy")) {
 			row = null;
 			letter = null;
+			// TODO: Test null case, currently get exception
 		}
 		else {
 			return false;
