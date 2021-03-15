@@ -163,13 +163,13 @@ public class Assignment2 {
 		
 		try {
 			// Get latest booking.id
-			String q3 = "select COALESCE((select max(id) from booking), 0);";
+			String q3 = "select COALESCE((select max(id) from booking), 0)";
 			PreparedStatement ps3 = connection.prepareStatement(q3);
 			ResultSet rs3 = ps3.executeQuery();
 			if (!rs3.next()) {
 				return false;
 			}
-			int id = rs3.getInt("max") + 1;
+			int id = rs3.getInt("coalesce") + 1;
 
 			// Get seat price
 			String q4 = "select " + seatClass + " from price where flight_id = ?";
