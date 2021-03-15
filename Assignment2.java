@@ -137,7 +137,7 @@ public class Assignment2 {
 			row = booked / 6 + 1;
 			letter = seatLetters.get(booked % 6);
 		} 
-		else {
+		else if (seatClass.equals("economy")) {
 			row = null;
 			letter = null;
 		}
@@ -277,10 +277,10 @@ public class Assignment2 {
 			while (remaining
 					&& ((currentClass.equals("business")
 						|| currRow < lastRow
-						|| (currRow == lastRow && currSeatIndex <= lastSeatIndex)))) {
+						|| (currRow == lastRow && currSeatIndex < lastSeatIndex)))) {
 				if (currentClass.equals("business")
 					&& (currRow > lastRow
-						|| (currRow == lastRow && currSeatIndex > lastSeatIndex))) {
+						|| (currRow == lastRow && currSeatIndex >= lastSeatIndex))) {
 					currentClass = "first";
 					currRow = startFRow;
 					currSeatIndex = startFSeatIndex;
@@ -294,8 +294,8 @@ public class Assignment2 {
 						"where id = ? ";
 				PreparedStatement psUpdateSeating = connection.prepareStatement(updateSeating);
 				psUpdateSeating.setObject(1, currentClass, Types.OTHER);
-				psUpdateSeating.setInt(2, startBRow);
-				psUpdateSeating.setString(3, String.valueOf((char)(startBSeatIndex + 'A' - 1)));
+				psUpdateSeating.setInt(2, currRow);
+				psUpdateSeating.setString(3, String.valueOf((char)(currSeatIndex + 'A' - 1)));
 				psUpdateSeating.setInt(4, rsOverbooked.getInt("id"));
 				psUpdateSeating.executeUpdate();
 				upgraded++;
@@ -398,8 +398,10 @@ public class Assignment2 {
 						System.out.println("===Upgrading===");
 						System.out.println("Enter flight id:");
 						flightID = userInput.nextInt();
-						if (instance.upgrade(flightID) != -1) {
+						int result = instance.upgrade(flightID);
+						if (result != -1) {
 							System.out.println("[Upgraded]");
+							System.out.println(result + " passengers upgraded.");
 						}
 						break;
 				}
