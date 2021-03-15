@@ -416,7 +416,8 @@ public class Assignment2 {
 
 						if (instance.bookSeat(passID, flightID, seatClass)) {
 							System.out.println("[Booked]");
-							System.out.println("(passID: " + passID + ", passflightID: " + flightID + ", seatClass: " + seatClass + ")");
+							String bookingInfo = String.format("passID: %d, flightID: %d, seatClass: %s", passID, flightID, seatClass);
+							System.out.println(bookingInfo);
 						}
 						break;
 					case "2":
