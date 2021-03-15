@@ -33,7 +33,9 @@ with recursive Hop as (
 	from 
 		flight
 	where 
-		s_dep >= (select day from day) and outbound = 'YYZ'
+		extract(year from s_dep) = extract(year from (select day from day)) 
+		and extract(day from s_dep) = extract(day from (select day from day))
+		and outbound = 'YYZ'
 	
 	union all
 
@@ -48,14 +50,23 @@ select inbound as destination, n as num_flights
 from Hop 
 order by n, id;
 
+-- Test queries
+
+
+-- select * 
+-- from Hop
+-- order by n, id;
+
+
 -- create TEMPORARY view hop1 as
 -- select 
 -- 	1 as n, id, outbound, inbound, s_dep, s_arv 
 -- from 
 -- 	flight
 -- where 
--- 	s_dep >= (select day from day) and outbound = 'YYZ'
--- ;
+-- 	extract(year from s_dep) = extract(year from (select day from day)) 
+-- 	and extract(day from s_dep) = extract(day from (select day from day))
+-- 	and outbound = 'YYZ';
 
 
 -- create TEMPORARY view hop2 as
@@ -64,8 +75,7 @@ order by n, id;
 -- from
 -- 	hop1 cross join Flight
 -- where 
--- 	n < (select n from n) and hop1.inbound = Flight.outbound and (Flight.s_dep - hop1.s_arv) <= '24:00:00' and (Flight.s_dep - hop1.s_arv) >= '00:00:00'
--- ;
+-- 	n < (select n from n) and hop1.inbound = Flight.outbound and (Flight.s_dep - hop1.s_arv) <= '24:00:00' and (Flight.s_dep - hop1.s_arv) >= '00:00:00';
 
 
 -- create TEMPORARY view hop3 as 
@@ -74,7 +84,7 @@ order by n, id;
 -- from
 -- 	hop2 cross join Flight
 -- where 
--- 	n < (select n from n) and hop2.inbound = Flight.outbound and (Flight.s_dep - hop2.s_arv) <= '24:00:00' and (Flight.s_dep - hop2.s_arv) >= '00:00:00'
--- ;
+-- 	n < (select n from n) and hop2.inbound = Flight.outbound and (Flight.s_dep - hop2.s_arv) <= '24:00:00' and (Flight.s_dep - hop2.s_arv) >= '00:00:00';
+
 
 -- select * from hop1 union all select * from hop2 union all select * from hop3; 
