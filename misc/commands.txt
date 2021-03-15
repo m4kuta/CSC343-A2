@@ -5,8 +5,8 @@ javac Assignment2.java
 java -cp /local/packages/jdbc-postgresql/postgresql-42.2.4.jar: Assignment2
 
 psql csc343h-fanhaoli
-\i air_travel.ddl
 set search_path to air_travel;
+\i air_travel.ddl
 \i q1.sql
 \i q2.sql
 \i q3.sql

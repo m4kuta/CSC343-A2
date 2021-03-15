@@ -134,6 +134,7 @@ public class Assignment2 {
 			return false;
 		} 
 		else if (capacity - booked > 0) {
+			row = 
 			row = booked / 6 + 1;
 			letter = seatLetters.get(booked % 6);
 		} 
