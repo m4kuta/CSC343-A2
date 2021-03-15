@@ -279,10 +279,10 @@ public class Assignment2 {
 			while (remaining
 					&& ((currentClass.equals("business")
 						|| currRow < lastRow
-						|| (currRow == lastRow && currSeatIndex <= lastSeatIndex)))) {
+						|| (currRow == lastRow && currSeatIndex < lastSeatIndex)))) {
 				if (currentClass.equals("business")
 					&& (currRow > lastRow
-						|| (currRow == lastRow && currSeatIndex > lastSeatIndex))) {
+						|| (currRow == lastRow && currSeatIndex >= lastSeatIndex))) {
 					currentClass = "first";
 					currRow = startFRow;
 					currSeatIndex = startFSeatIndex;
@@ -402,8 +402,10 @@ public class Assignment2 {
 						System.out.println("===Upgrading===");
 						System.out.println("Enter flight id:");
 						flightID = userInput.nextInt();
-						if (instance.upgrade(flightID) != -1) {
+						int result = instance.upgrade(flightID);
+						if (result != -1) {
 							System.out.println("[Upgraded]");
+							System.out.println(result + " passengers upgraded.");
 						}
 						break;
 				}
